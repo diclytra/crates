@@ -1,0 +1,34 @@
+FROM archlinux
+
+ENV http_proxy="http://forwardproxy:3128"
+ENV https_proxy="http://forwardproxy:3128"
+ENV GOPRIVATE="github.com/anhuret"
+ENV GONOPROXY="github.com/anhuret"
+ENV CGO_ENABLED="0"
+
+RUN pacman -Syu --noconfirm
+RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh
+RUN pacman -Scc --noconfirm
+RUN ln -sf /usr/bin/nvim /usr/bin/vi
+
+RUN useradd -m -u 5001 ruslan && usermod -a -G wheel ruslan
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
+
+USER ruslan
+WORKDIR /home/ruslan
+
+RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
+
+RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
+COPY fragments/init.vim .config/nvim/
+RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+RUN nvim --headless +PlugInstall +qa &> /dev/null && \
+    nvim --headless +GoInstallBinaries +qa &> /dev/null
+
+COPY fragments/profile .bash_profile
+COPY fragments/tmux.conf .tmux.conf
+COPY fragments/gitconfig .gitconfig
+COPY fragments/spawn utils/spawn
+
+CMD ["/bin/bash"]

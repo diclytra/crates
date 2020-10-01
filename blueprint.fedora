@@ -1,0 +1,41 @@
+FROM fedora
+
+ENV http_proxy="http://forwardproxy:3128"
+ENV https_proxy="http://forwardproxy:3128"
+
+RUN dnf -y --setopt=install_weak_deps=False --best upgrade
+RUN dnf -y --setopt=install_weak_deps=False --best install git go neovim tmux nodejs yarnpkg openssh
+RUN dnf -y remove vim
+RUN dnf clean all
+RUN ln -sf /usr/bin/nvim /usr/bin/vi
+
+RUN useradd -u 5001 ruslan && usermod -a -G wheel ruslan
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
+RUN echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
+
+USER ruslan
+WORKDIR /home/ruslan
+
+RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
+
+RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
+COPY fragments/init.vim .config/nvim/
+RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+RUN nvim --headless +PlugInstall +qa &> /dev/null && \
+    nvim --headless +GoInstallBinaries +qa &> /dev/null
+
+COPY fragments/profile .profile
+COPY fragments/tmux.conf .tmux.conf
+COPY fragments/gitconfig .gitconfig
+RUN cat .profile >> .bashrc
+COPY fragments/spawn utils/spawn
+
+ENV GOPRIVATE="github.com/anhuret"
+ENV GONOPROXY="github.com/anhuret"
+ENV CGO_ENABLED="0"
+
+CMD ["/bin/bash"]
+
+# podman run --pod devine -d --name postgres --network host -e POSTGRES_PASSWORD=postgres postgres:13-alpine
+# podman run -itd --userns=keep-id --privileged --name devine --hostname devine --network host -v /data/devel:/home/ruslan/code devine
