@@ -1,21 +1,29 @@
 FROM archlinux
 
-ENV http_proxy="http://forwardproxy:3128"
-ENV https_proxy="http://forwardproxy:3128"
 ENV GOPRIVATE="github.com/anhuret"
 ENV GONOPROXY="github.com/anhuret"
 ENV CGO_ENABLED="0"
+
+ARG USERID
+ARG VERS
+ARG NAME
+ARG UNAME
+
+LABEL name=$NAME
+LABEL version=$VERS
+LABEL description="GO and JS development environmant"
+LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
 RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh
 RUN pacman -Scc --noconfirm
 RUN ln -sf /usr/bin/nvim /usr/bin/vi
 
-RUN useradd -m -u 5001 ruslan && usermod -a -G wheel ruslan
+RUN useradd -m -u $USERID $UNAME && usermod -a -G wheel $UNAME
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 
-USER ruslan
-WORKDIR /home/ruslan
+USER $UNAME
+WORKDIR /home/$UNAME
 
 RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
 
@@ -31,4 +39,5 @@ COPY fragments/tmux.conf .tmux.conf
 COPY fragments/gitconfig .gitconfig
 COPY fragments/spawn utils/spawn
 
-CMD ["/bin/bash"]
+CMD ["/bin/bash", "-l"]
+

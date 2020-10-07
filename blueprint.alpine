@@ -1,20 +1,28 @@
-FROM golang:alpine
+FROM alpine:edge
 
-ENV http_proxy="http://forwardproxy:3128"
-ENV https_proxy="http://forwardproxy:3128"
 ENV GOPRIVATE="github.com/anhuret"
 ENV GONOPROXY="github.com/anhuret"
 ENV CGO_ENABLED="0"
 
+ARG USERID
+ARG VERS
+ARG NAME
+ARG UNAME
+
+LABEL name=$NAME
+LABEL version=$VERS
+LABEL description="GO and JS development environmant"
+LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
+
 RUN apk upgrade -U --no-cache
-RUN apk add -U --no-cache git curl neovim tmux nodejs yarn sudo gnupg openssh
+RUN apk add -U --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh
 RUN rm -f /usr/bin/vi && ln -s /usr/bin/nvim /usr/bin/vi
 
-RUN adduser -D -u 5001 ruslan && addgroup ruslan wheel
+RUN adduser -D -u $USERID $UNAME && addgroup $UNAME wheel
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 
-USER ruslan
-WORKDIR /home/ruslan
+USER $UNAME
+WORKDIR /home/$UNAME
 
 RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
 
@@ -31,7 +39,4 @@ COPY fragments/gitconfig .gitconfig
 COPY fragments/spawn utils/spawn
 
 CMD ["/bin/ash","-l"]
-
-# podman run --pod devine -itd --userns=keep-id --privileged --name code --network host -v /home/ruslan/code:/home/ruslan/code devine
-# podman run --pod devine -d --name postgres --network host -e POSTGRES_PASSWORD=postgres postgres:13-alpine
 
