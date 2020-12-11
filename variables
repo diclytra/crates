@@ -1,6 +1,3 @@
-VERS=$RANDOM
-USERID=1000
 NAME=devine
-UNAME=ruslan
-BASE=arch
+UIDN=ruslan
 

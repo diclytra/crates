@@ -1,6 +1,10 @@
 [url "git@github.com:"]
-        insteadOf = https://github.com/
+  insteadOf = https://github.com/
 [user]
-        name = Ruslan Sendecky
-        email = ruslan.sendecky@nab.com.au
+  name = Ruslan Sendecky
+  email = r.sendecky@gmail.com
+[pull]
+  rebase = false
+[push]
+  followTags = true
 

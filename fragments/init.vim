@@ -11,26 +11,35 @@ set visualbell
 set colorcolumn=96
 set noshowmode
 set laststatus=2
+set encoding=utf-8
+set fileencoding=utf-8
+set backspace=indent,eol,start
 
 call plug#begin('~/.local/share/nvim/site/plugins')
 
+Plug 'preservim/nerdtree'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'fatih/vim-go'
 Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'prettier/vim-prettier'
 Plug 'othree/html5.vim'
+Plug 'alvan/vim-closetag'
 Plug 'yggdroot/indentline'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'joshdick/onedark.vim'
 Plug 'mengelbrecht/lightline-bufferline'
+Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
 colorscheme onedark
+
+:nnoremap <C-g> :NERDTreeToggle<CR>
 
 let g:netrw_liststyle = 3
 let g:netrw_banner = 0
@@ -38,13 +47,21 @@ let g:netrw_browse_split = 4
 let g:netrw_winsize = 20
 
 let g:go_metalinter_autosave = 1
-let g:go_fmt_command = "goimports"     
+let g:go_fmt_command = "goimports"
+let g:go_rename_command = "gopls"     
 let g:go_auto_type_info = 1
 let g:go_highlight_types = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
+let g:go_auto_sameids = 1
+
+au filetype go inoremap <buffer> . .<C-x><C-o>
+autocmd FileType go nmap <leader>t  <Plug>(go-test)
+autocmd FileType go nmap <leader>b  <Plug>(go-build)
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
 
 let g:prettier#autoformat = 1
 let g:prettier#autoformat_require_pragma = 0

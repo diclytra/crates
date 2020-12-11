@@ -4,10 +4,9 @@ ENV GOPRIVATE="github.com/anhuret"
 ENV GONOPROXY="github.com/anhuret"
 ENV CGO_ENABLED="0"
 
-ARG USERID
 ARG VERS
 ARG NAME
-ARG UNAME
+ARG UIDN
 
 LABEL name=$NAME
 LABEL version=$VERS
@@ -19,11 +18,11 @@ RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh
 RUN pacman -Scc --noconfirm
 RUN ln -sf /usr/bin/nvim /usr/bin/vi
 
-RUN useradd -m -u $USERID $UNAME && usermod -a -G wheel $UNAME
+RUN useradd -m $UIDN && usermod -a -G wheel $UIDN
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 
-USER $UNAME
-WORKDIR /home/$UNAME
+USER $UIDN
+WORKDIR /home/$UIDN
 
 RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
 
@@ -33,11 +32,19 @@ RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugInstall +qa &> /dev/null && \
     nvim --headless +GoInstallBinaries +qa &> /dev/null
+RUN yarn global add prettier
 
 COPY fragments/profile .bash_profile
 COPY fragments/tmux.conf .tmux.conf
 COPY fragments/gitconfig .gitconfig
 COPY fragments/spawn utils/spawn
+
+USER root
+
+RUN chown -R $UIDN:$UIDN /home/$UIDN
+RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
+
+USER $UIDN
 
 CMD ["/bin/bash", "-l"]
 
