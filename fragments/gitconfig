@@ -1,10 +1,15 @@
-[url "git@github.com:"]
-  insteadOf = https://github.com/
-[user]
-  name = Ruslan Sendecky
-  email = r.sendecky@gmail.com
-[pull]
-  rebase = false
-[push]
-  followTags = true
-
+[user]                                                                                                                                                       
+  name = Ruslan Sendecky                                                                                                                                     
+  email = r.sendecky@gmail.com                                                                                                                               
+                                                                                                                                                             
+[pull]                                                                                                                                                       
+  rebase = false                                                                                                                                             
+                                                                                                                                                             
+[push]                                                                                                                                                       
+  followTags = true                                                                                                                                          
+                                                                                                                                                             
+[url "git@gitlab.com:"]                                                                                                                                      
+  insteadOf = https://gitlab.com/                                                                                                                            
+                                                                                                                                                             
+[url "git@github.com:"]                                                                                                                                      
+  insteadOf = https://github.com/        
