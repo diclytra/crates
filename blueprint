@@ -14,7 +14,7 @@ LABEL description="GO and JS development environmant"
 LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
 RUN pacman -Syu --noconfirm
-RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh
+RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh fish
 RUN pacman -Scc --noconfirm
 RUN ln -sf /usr/bin/nvim /usr/bin/vi
 
