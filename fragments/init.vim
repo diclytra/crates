@@ -10,10 +10,10 @@ set showcmd
 set visualbell
 set colorcolumn=96
 set noshowmode
-set laststatus=2
 set encoding=utf-8
 set fileencoding=utf-8
 set backspace=indent,eol,start
+set number
 
 call plug#begin('~/.local/share/nvim/site/plugins')
 
@@ -31,13 +31,15 @@ Plug 'othree/html5.vim'
 Plug 'alvan/vim-closetag'
 Plug 'yggdroot/indentline'
 Plug 'cakebaker/scss-syntax.vim'
-Plug 'itchyny/lightline.vim'
-Plug 'mengelbrecht/lightline-bufferline'
 Plug 'joshdick/onedark.vim'
+Plug 'vim-airline/vim-airline'
 
 call plug#end()
 
 colorscheme onedark
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tmuxline#enabled = 1
 
 :nnoremap <C-g> :NERDTreeToggle<CR>
 
@@ -57,7 +59,7 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_auto_sameids = 1
 
-au filetype go inoremap <buffer> . .<C-x><C-o>
+"au filetype go inoremap <buffer> . .<C-x><C-o>
 autocmd FileType go nmap <leader>t  <Plug>(go-test)
 autocmd FileType go nmap <leader>b  <Plug>(go-build)
 autocmd FileType go nmap <leader>r  <Plug>(go-run)
@@ -69,17 +71,6 @@ let g:prettier#exec_cmd_async = 1
 
 let g:prettier#config#semi = 'false'
 autocmd InsertLeave *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.md,*.yaml,*.html PrettierAsync
-
-let g:lightline#bufferline#show_number  = 1
-let g:lightline#bufferline#shorten_path = 0
-let g:lightline#bufferline#unnamed      = '[No Name]'
-let g:lightline#bufferline#filename_modifier = ':t'
-
-let g:lightline                  = {}
-let g:lightline.active = {'left': [ [ 'mode', 'paste' ], [ 'gitbranch', 'readonly', 'modified' ], [ 'buffers' ] ]}
-let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
-let g:lightline.component_type   = {'buffers': 'tabsel'}
-let g:lightline.component_function = {'gitbranch': 'FugitiveHead'}
 
 let mapleader = "'"
 
