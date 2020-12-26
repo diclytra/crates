@@ -14,8 +14,9 @@ LABEL description="GO and JS development environmant"
 LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish
+RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata
 RUN rm -f /usr/bin/vi && ln -s /usr/bin/nvim /usr/bin/vi
+RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
@@ -26,21 +27,21 @@ WORKDIR /home/$UIDN
 RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
 
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
-COPY fragments/init.vim .config/nvim/
+COPY fragments/nvim/init.vim .config/nvim/
 RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugInstall +qa &> /dev/null && \
     nvim --headless +GoInstallBinaries +qa &> /dev/null
+RUN yarn global add prettier
 
-COPY fragments/profile .profile
-COPY fragments/tmux.conf .tmux.conf
-COPY fragments/gitconfig .gitconfig
-COPY fragments/basic.fish .config/fish/functions/
+COPY fragments/home/profile .profile
+COPY fragments/home/tmux.conf .tmux.conf
+COPY fragments/home/gitconfig .gitconfig
+COPY fragments/fish/ .config/fish/functions/
 
 USER root
 
 RUN chown -R $UIDN:$UIDN /home/$UIDN
-RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 USER $UIDN
 
