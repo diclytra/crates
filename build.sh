@@ -7,7 +7,7 @@ docker build --rm \
 --build-arg VERS=$VERS \
 --build-arg NAME=$NAME \
 --build-arg UIDN=$UIDN \
--f blueprint -t $NAME:$VERS .
+-f blueprint.$TYPE -t $NAME:$VERS .
 if [[ $? -ne 0 ]];then
   exit $?
 fi

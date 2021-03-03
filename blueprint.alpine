@@ -18,7 +18,7 @@ RUN ln -s /usr/bin/nvim /usr/bin/nv
 RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
-RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopass
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 
 USER $UIDN
 WORKDIR /home/$UIDN

@@ -1,7 +1,6 @@
 FROM archlinux
 
-ENV GOPRIVATE="github.com/anhuret"
-ENV GONOPROXY="github.com/anhuret"
+ENV GOPRIVATE="github.com/anhuret,gitlab.com/onuris"
 ENV CGO_ENABLED="0"
 
 ARG VERS
@@ -14,9 +13,10 @@ LABEL description="GO and JS development environmant"
 LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
 RUN pacman -Syu --noconfirm
-RUN pacman -S --noconfirm sudo git go neovim tmux nodejs yarn openssh fish
+RUN pacman -S --noconfirm go git neovim tmux nodejs yarn sudo openssh fish
 RUN pacman -Scc --noconfirm
-RUN ln -sf /usr/bin/nvim /usr/bin/vi
+RUN ln -sf /usr/bin/nvim /usr/bin/nv
+RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN useradd -m $UIDN && usermod -a -G wheel $UIDN
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
@@ -27,22 +27,21 @@ WORKDIR /home/$UIDN
 RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
 
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
-COPY fragments/init.vim .config/nvim/
+COPY fragments/nvim/init.vim .config/nvim/
 RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugInstall +qa &> /dev/null && \
     nvim --headless +GoInstallBinaries +qa &> /dev/null
 RUN yarn global add prettier
 
-COPY fragments/profile .bash_profile
-COPY fragments/tmux.conf .tmux.conf
-COPY fragments/gitconfig .gitconfig
-COPY fragments/spawn utils/spawn
+COPY fragments/home/profile .bash_profile
+COPY fragments/home/tmux.conf .tmux.conf
+COPY fragments/home/gitconfig .gitconfig
+COPY fragments/fish/ .config/fish/functions/
 
 USER root
 
 RUN chown -R $UIDN:$UIDN /home/$UIDN
-RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 USER $UIDN
 
