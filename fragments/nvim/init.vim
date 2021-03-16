@@ -32,11 +32,12 @@ Plug 'alvan/vim-closetag'
 Plug 'yggdroot/indentline'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'joshdick/onedark.vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'vim-airline/vim-airline'
 
 call plug#end()
 
-colorscheme onedark
+colorscheme dracula
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tmuxline#enabled = 1
