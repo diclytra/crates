@@ -7,13 +7,5 @@ podman build --rm --squash-all \
 --build-arg VERS=$VERS \
 --build-arg NAME=$NAME \
 --build-arg UIDN=$UIDN \
--f blueprint.$TYPE -t $NAME:$VERS .
-if [[ $? -ne 0 ]];then
-  exit $?
-fi
-
-podman tag $NAME:$VERS $NAME:latest
-if [[ $? -eq 0 ]];then
-  printf "$VERS" > version
-fi
+-f blueprint.$TYPE -t $NAME .
 

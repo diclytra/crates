@@ -14,8 +14,8 @@ LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
 RUN apk upgrade -U --no-cache
 RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata
-RUN ln -s /usr/bin/nvim /usr/bin/nv
-RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
+RUN ln -sf /usr/bin/nvim /usr/bin/nv
+RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
@@ -23,7 +23,7 @@ RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 USER $UIDN
 WORKDIR /home/$UIDN
 
-RUN ssh-keygen -q -f ~/.ssh/id_rsa -t rsa -N ''
+RUN ssh-keygen -q -f ~/.ssh/id_rsa -t ed25519 -N ''
 
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
 COPY fragments/nvim/init.vim .config/nvim/

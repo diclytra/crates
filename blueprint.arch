@@ -16,7 +16,7 @@ RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm go git neovim tmux nodejs yarn sudo openssh fish
 RUN pacman -Scc --noconfirm
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
-RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN useradd -m $UIDN && usermod -a -G wheel $UIDN
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
