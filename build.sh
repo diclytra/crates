@@ -3,7 +3,7 @@
 . ./variables
 VERS=$(date +%y%m%d%H%M)
 
-docker build --rm \
+podman build --rm --squash-all \
 --build-arg VERS=$VERS \
 --build-arg NAME=$NAME \
 --build-arg UIDN=$UIDN \
@@ -12,7 +12,7 @@ if [[ $? -ne 0 ]];then
   exit $?
 fi
 
-docker tag $NAME:$VERS $NAME:latest
+podman tag $NAME:$VERS $NAME:latest
 if [[ $? -eq 0 ]];then
   printf "$VERS" > version
 fi

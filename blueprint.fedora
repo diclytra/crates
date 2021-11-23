@@ -1,4 +1,4 @@
-FROM archlinux
+FROM fedora
 
 ENV GOPRIVATE="github.com/anhuret,gitlab.com/onuris"
 ENV CGO_ENABLED="0"
@@ -12,14 +12,13 @@ LABEL version=$VERS
 LABEL description="GO and JS development environmant"
 LABEL maintainer="Ruslan Sendecky <r.sendecky@gmail.com>"
 
-RUN pacman -Syu --noconfirm
-RUN pacman -S --noconfirm go git neovim tmux nodejs yarn sudo openssh fish
-RUN pacman -Scc --noconfirm
+RUN dnf -y --setopt=install_weak_deps=False install go git neovim tmux nodejs yarnpkg openssh fish
+RUN dnf -y clean all
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
-RUN ln -s /usr/share/zoneinfo/Australia/Sydney /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN useradd -m $UIDN && usermod -a -G wheel $UIDN
-RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopass
 
 USER $UIDN
 WORKDIR /home/$UIDN
