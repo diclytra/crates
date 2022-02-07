@@ -34,6 +34,7 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'vim-airline/vim-airline'
+Plug 'rust-lang/rust.vim'
 
 call plug#end()
 
@@ -72,6 +73,8 @@ let g:prettier#exec_cmd_async = 1
 
 let g:prettier#config#semi = 'false'
 autocmd InsertLeave *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.md,*.yaml,*.html PrettierAsync
+
+let g:rustfmt_autosave = 1
 
 let mapleader = "'"
 
