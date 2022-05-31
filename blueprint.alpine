@@ -19,6 +19,7 @@ RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
 RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
+RUN echo $NAME > /etc/hostname
 
 USER $UIDN
 WORKDIR /home/$UIDN
@@ -36,7 +37,7 @@ RUN yarn global add prettier
 COPY fragments/home/profile .profile
 COPY fragments/home/tmux.conf .tmux.conf
 COPY fragments/home/gitconfig .gitconfig
-COPY fragments/fish/ .config/fish/functions/
+COPY fragments/fish/config.fish .config/fish/config.fish
 
 USER root
 
