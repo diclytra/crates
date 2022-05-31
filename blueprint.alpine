@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine
 
 ENV GOPRIVATE="github.com/anhuret,gitlab.com/onuris"
 ENV CGO_ENABLED="0"
