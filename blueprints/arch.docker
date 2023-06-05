@@ -24,8 +24,6 @@ RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopasswd
 USER $UIDN
 WORKDIR /home/$UIDN
 
-RUN ssh-keygen -q -f ~/.ssh/id_ed25519 -t ed25519 -N ''
-
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
 COPY fragments/nvim/init.vim .config/nvim/
 RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \

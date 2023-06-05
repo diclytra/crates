@@ -1,5 +1,5 @@
 NAME="devine"
-UIDN="ruslan"
-TYPE="alpine"
-EXEC="docker"
+UIDN="super"
+TYPE="arch"
+EXEC="podman"
 SHELF="work"
