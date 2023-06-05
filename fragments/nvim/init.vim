@@ -35,6 +35,7 @@ Plug 'joshdick/onedark.vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'vim-airline/vim-airline'
 Plug 'rust-lang/rust.vim'
+Plug 'dense-analysis/ale'
 
 call plug#end()
 
@@ -60,6 +61,13 @@ let g:go_highlight_fields = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_auto_sameids = 1
+
+let g:ale_fixers = {
+\  '*': ['remove_trailing_lines', 'trim_whitespace'],
+\  'javascript': ['prettier'],
+\  'css': ['prettier'],
+\  'json': ['jq'],
+\}
 
 "au filetype go inoremap <buffer> . .<C-x><C-o>
 autocmd FileType go nmap <leader>t  <Plug>(go-test)

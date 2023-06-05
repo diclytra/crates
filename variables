@@ -1,3 +1,5 @@
-NAME=devine
-UIDN=ruslan
-TYPE=alpine
+NAME="devine"
+UIDN="ruslan"
+TYPE="alpine"
+EXEC="docker"
+SHELF="work"
