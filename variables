@@ -1,5 +1,5 @@
 NAME="devine"
 UIDN="super"
-TYPE="arch"
+TYPE="alpine"
 EXEC="podman"
-SHELF="work"
+MOUNT="space"
