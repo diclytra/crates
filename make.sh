@@ -34,6 +34,7 @@ function deploy {
   mkdir -p $SEC/ssh && chmod -R 700 $SEC
   $EXEC run \
   -itd \
+  --privileged \
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
