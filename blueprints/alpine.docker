@@ -13,7 +13,7 @@ LABEL description="GO and JS development environmant"
 LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata rust rustfmt rustup python3 bash
+RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata python3 bash
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
@@ -23,8 +23,6 @@ RUN echo $NAME > /etc/hostname
 
 USER $UIDN
 WORKDIR /home/$UIDN
-
-RUN ssh-keygen -q -f ~/.ssh/id_ed25519 -t ed25519 -N ''
 
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
 COPY fragments/nvim/init.vim .config/nvim/
@@ -38,7 +36,6 @@ COPY fragments/home/profile .profile
 COPY fragments/home/tmux.conf .tmux.conf
 COPY fragments/home/gitconfig .gitconfig
 COPY fragments/fish/config.fish .config/fish/config.fish
-COPY fragments/home/ssh-config .ssh/config
 
 USER root
 

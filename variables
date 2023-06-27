@@ -1,5 +1,4 @@
 NAME="devine"
-UIDN="super"
+UIDN="aslan"
 TYPE="alpine"
 EXEC="podman"
-MOUNT="space"
