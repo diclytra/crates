@@ -13,7 +13,8 @@ LABEL description="GO and JS development environmant"
 LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata python3 bash
+RUN apk add --no-cache \
+go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata python3 bash gocryptfs jq yq
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
@@ -30,11 +31,12 @@ RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugInstall +qa &> /dev/null && \
     nvim --headless +GoInstallBinaries +qa &> /dev/null
-RUN yarn global add prettier
+RUN yarn global add prettier eslint
 
 COPY fragments/home/profile .profile
 COPY fragments/home/tmux.conf .tmux.conf
 COPY fragments/home/gitconfig .gitconfig
+COPY fragments/home/eslintrc .eslintrc
 COPY fragments/fish/config.fish .config/fish/config.fish
 
 USER root

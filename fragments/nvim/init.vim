@@ -69,6 +69,7 @@ let g:ale_fixers = {
 \  'css': ['prettier'],
 \  'json': ['jq'],
 \}
+let b:ale_linters = ['eslint']
 
 "au filetype go inoremap <buffer> . .<C-x><C-o>
 autocmd FileType go nmap <leader>t  <Plug>(go-test)

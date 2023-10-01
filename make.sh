@@ -22,6 +22,7 @@ function build {
   --build-arg VERS=$VERS \
   --build-arg NAME=$NAME \
   --build-arg UIDN=$UIDN \
+  --rm --squash-all \
   -f blueprints/$TYPE.docker \
   -t $NAME:$VERS \
   -t $NAME \
