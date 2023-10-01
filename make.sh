@@ -2,8 +2,7 @@
 
 . ./variables
 VERS=$(date +%y%m%d%H%M)
-TGT="$HOME/stage"
-SEC="$HOME/groot"
+STG="$HOME/stage"
 
 function usage {
 echo "
@@ -31,25 +30,17 @@ function build {
 
 function deploy {
   echo "info: deploying base $TYPE with name $NAME"
-  mkdir -p $TGT && chmod -R 700 $TGT
-  if [[ -d $SEC/ssh ]]; then
-    find $SEC -type d -exec chmod 700 {} +
-    find $SEC -type f -exec chmod 600 {} +
-  else
-    echo "$SEC is missing"
-    exit 1
-  fi
+  mkdir -p $STG && chmod -R 700 $STG
   $EXEC run \
   -itd \
   --privileged \
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v $TGT:/home/$UIDN/${TGT##*/} \
-  -v $SEC:/home/$UIDN/${SEC##*/} \
-  -p 1234:1234 -p 7777:7777 -p 8888:8888 \
+  -v $STG:/home/$UIDN/${STG##*/} \
+  -v $HOME/.ssh:/home/$UIDN/.ssh \
+  -p 1234:1234 \
   $NAME
-  $EXEC exec $NAME ln -s /home/$UIDN/${SEC##*/}/ssh /home/$UIDN/.ssh
 }
 
 [[ $# == 0  ]] && usage
