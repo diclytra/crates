@@ -1,2 +1,1 @@
-# devine
-Development container
+# Utility containers
