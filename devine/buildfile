@@ -14,7 +14,7 @@ LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 RUN apk upgrade -U --no-cache
 RUN apk add --no-cache \
-go git curl neovim tmux nodejs yarn sudo gnupg openssh fish tzdata python3 bash gocryptfs jq yq
+go git curl neovim tmux nodejs yarn sudo openssh fish tzdata python3 bash jq yq
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
@@ -26,24 +26,19 @@ USER $UIDN
 WORKDIR /home/$UIDN
 
 RUN mkdir -p ~/.config/nvim/ ~/.local/share/nvim/site/plugins
-COPY fragments/nvim/init.vim .config/nvim/
+COPY files/nvim/init.vim .config/nvim/
+
 RUN curl -sfLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN nvim --headless +PlugInstall +qa &> /dev/null && \
     nvim --headless +GoInstallBinaries +qa &> /dev/null
 RUN yarn global add prettier eslint
 
-COPY fragments/home/profile .profile
-COPY fragments/home/tmux.conf .tmux.conf
-COPY fragments/home/gitconfig .gitconfig
-COPY fragments/home/eslintrc .eslintrc
-COPY fragments/fish/config.fish .config/fish/config.fish
-
-USER root
-
-RUN chown -R $UIDN:$UIDN /home/$UIDN
-
-USER $UIDN
+COPY files/home/profile .profile
+COPY files/home/tmux.conf .tmux.conf
+COPY files/home/gitconfig .gitconfig
+COPY files/home/eslintrc .eslintrc
+COPY files/fish/config.fish .config/fish/config.fish
 
 CMD ["/bin/ash","-l"]
 

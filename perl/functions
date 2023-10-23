@@ -1,0 +1,35 @@
+VERS="1.0.$(date +%y%m%d%H%M)"
+NAME=$(basename $(pwd))
+
+function build {
+  echo "info: building $NAME version $VERS"
+
+  podman build \
+  --build-arg VERS=$VERS \
+  --build-arg NAME=$NAME \
+  --build-arg UIDN=$UIDN \
+  --rm --squash-all \
+  -f buildfile \
+  -t $NAME:$VERS \
+  -t $NAME \
+  .
+}
+
+function run {
+  echo "info: running $NAME"
+
+  if ! podman volume exists $NAME; then
+    echo "volume $NAME doesn't exist. creating..."
+    podman volume create $NAME
+  fi
+
+  podman run \
+  -itd \
+  --privileged \
+  --userns=keep-id \
+  --hostname $NAME \
+  --name $NAME \
+  -v $NAME:/data \
+  $NAME
+}
+
