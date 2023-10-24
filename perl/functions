@@ -1,4 +1,4 @@
-VERS="1.0.$(date +%y%m%d%H%M)"
+VERS="$(date +%y%m%d%H%M)"
 NAME=$(basename $(pwd))
 
 function build {
@@ -10,7 +10,6 @@ function build {
   --build-arg UIDN=$UIDN \
   --rm --squash-all \
   -f buildfile \
-  -t $NAME:$VERS \
   -t $NAME \
   .
 }
