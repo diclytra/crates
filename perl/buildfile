@@ -14,7 +14,7 @@ RUN apk add --no-cache sudo gnupg gocryptfs
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
 RUN mkdir -p /etc/sudoers.d && echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopass
-RUN chown -R $UIDN:$UIDN /data
+RUN mkdir -p /data && chown -R $UIDN:$UIDN /data
 
 USER $UIDN
 WORKDIR /home/$UIDN
