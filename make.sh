@@ -62,5 +62,6 @@ for c in ${CS[@]}; do
       usage
       ;;
   esac
+  cd ../
 done
 
