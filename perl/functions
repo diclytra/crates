@@ -17,18 +17,13 @@ function build {
 function run {
   echo "info: running $NAME"
 
-  if ! podman volume exists $NAME; then
-    echo "volume $NAME doesn't exist. creating..."
-    podman volume create $NAME
-  fi
-
   podman run \
   -itd \
   --privileged \
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v $NAME:/data \
+  -v /mnt/chromeos/GoogleDrive/MyDrive/safe/:/data \
   $NAME
 }
 

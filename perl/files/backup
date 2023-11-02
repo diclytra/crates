@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SRC=/data/vault
+DST=/data/backup
+STP="$(date +%y%m%d%H%M)"
+
+tar -cJvf ${DST}/vault-${STP}.txz -C ${SRC%/*} ${SRC##*/}
+if [[ $? == 0 ]]; then
+  rm $(ls -1r ${DST}/* | tail -n +5)
+  echo "success"
+else
+  echo "error"
+fi

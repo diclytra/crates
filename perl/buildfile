@@ -10,17 +10,18 @@ LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache sudo gnupg gocryptfs
+RUN apk add --no-cache sudo gnupg gocryptfs xz tzdata
+RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
 RUN mkdir -p /etc/sudoers.d && echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopass
-RUN chown -R $UIDN:$UIDN /data
+RUN mkdir -p /data && chown -R $UIDN:$UIDN /data
 
 USER $UIDN
 WORKDIR /home/$UIDN
 RUN mkdir -p ~/vault
-
-RUN echo 'alias vo="gocryptfs -i 10m -nosyslog -q /data/vault/ $HOME/vault/"' >> .profile
+COPY files/backup ./
+RUN echo 'alias vo="gocryptfs -i 5m -nosyslog -q /data/vault/ $HOME/vault/"' >> .profile
 RUN echo 'alias vc="fusermount -u $HOME/vault/"' >> .profile
 
 CMD ["/bin/ash","-l"]
