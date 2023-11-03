@@ -16,6 +16,7 @@ function build {
 
 function run {
   echo "info: running $NAME"
+  [[ ! -L $HOME/safe || ! -e $HOME/safe ]] && echo "error: broken symlink: $HOME/safe" && exit 1
 
   podman run \
   -itd \
