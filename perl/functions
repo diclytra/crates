@@ -23,7 +23,7 @@ function run {
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v /mnt/chromeos/GoogleDrive/MyDrive/safe/:/data \
+  -v $HOME/safe:/data \
   $NAME
 }
 

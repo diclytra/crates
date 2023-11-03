@@ -20,7 +20,7 @@ RUN mkdir -p /data && chown -R $UIDN:$UIDN /data
 USER $UIDN
 WORKDIR /home/$UIDN
 RUN mkdir -p ~/vault
-COPY files/backup ./
+COPY files/backup utils/
 RUN echo 'alias vo="gocryptfs -i 5m -nosyslog -q /data/vault/ $HOME/vault/"' >> .profile
 RUN echo 'alias vc="fusermount -u $HOME/vault/"' >> .profile
 
