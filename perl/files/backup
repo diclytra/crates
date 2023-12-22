@@ -2,12 +2,17 @@
 
 SRC=/data/vault
 DST=/data/backup
+MNT=$HOME/vault
 STP="$(date +%y%m%d%H%M)"
+
+ls $SRC $DST $MNT &>/dev/null || { echo "error: missing dirs" && exit 1; }
+mountpoint -q $MNT && { echo "error: vault is mounted" && exit 1; }
 
 tar -cJvf ${DST}/vault-${STP}.txz -C ${SRC%/*} ${SRC##*/}
 if [[ $? == 0 ]]; then
   rm $(ls -1r ${DST}/* | tail -n +5)
-  echo "success"
+  echo "info: success"
 else
-  echo "error"
+  echo "error: backup"
 fi
+
