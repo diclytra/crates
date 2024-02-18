@@ -3,32 +3,105 @@
 SRC=/data/vault
 DST=/data/backup
 ARC=/data/archive
+STG=/data/stage
 MNT=$HOME/vault
+
 STP="$(date +%y%m%d%H%M)"
 RET="10"
-NAM="vault"
 
-ls $SRC $DST $MNT &>/dev/null || { echo "error: missing dirs" && exit 1; }
-mountpoint -q $MNT && { echo "error: vault is mounted" && exit 1; }
-
-if [[ $1 == "-p" ]]; then
-  NAM="heritage"
+if ! ls $SRC $DST $ARC $SRG $MNT &>/dev/null; then
+  echo "error: missing main directories"
+  exit 1
 fi
 
-tar -cJvf ${DST}/${NAM}-${STP}.txz -C ${SRC%/*} ${SRC##*/}
+function glyph {
+  echo "info: glyphs"
 
-if [[ $? == 0 ]]; then
+  local name="glyphs"
+  local file=${name}-${STP}.txz
+  local crypt=${file}.asc
+
+  if ! mountpoint -q $MNT; then
+    echo "error: vault is NOT mounted for backup"
+    exit 1
+  fi
+
+  cd $MNT
+  if [[ $(pwd) != $MNT ]] || [[ ! -d $name ]]; then
+    echo "error: $name is not found"
+    exit 1
+  fi
+
+  tar -cJf $file $name
+  if [[ $? != 0 ]] || [[ ! -f $file ]]; then
+    echo "error: tar file"
+    exit 1
+  fi
+
+  gpg -ca $file
+  if [[ $? != 0 ]] || [[ ! -f $crypt ]] || [[ ! -s $crypt ]]; then
+    echo "error: gpg file"
+  else  
+    cat $crypt
+    mv $crypt ${STG}/${crypt}
+  fi
+
+  if [[ -f ${STG}/${crypt} ]]; then
+    echo "info: success"
+  fi
+  rm -f $file
+}
+
+function backup {
+  echo "info: backup"
+
+  local name="vault"
+  local file=${DST}/${name}-${STP}.txz
+
+
+  if mountpoint -q $MNT; then
+    echo "error: vault is mounted"
+    exit 1
+  fi
+
+  tar -cJvf $file -C ${SRC%/*} ${SRC##*/}
+  if [[ $? != 0 ]]; then
+    echo "error: archive"
+    rm -f $file
+    exit 1
+  fi
   echo "info: success"
-  C=$(ls -1 ${DST}/vault* | wc -l)
-  if [[ $C -gt $RET ]]; then
+
+  local count=$(ls -1 ${DST}/vault* | wc -l)
+  if [[ $count -gt $RET ]]; then
     echo "info: shaving"
     rm -f $(ls -1r ${DST}/vault* | tail -n +${RET})
   fi
-  if [[ $NAM == "heritage" ]]; then
-    echo "info: archiving"
-    mv ${DST}/heritage* $ARC
-  fi
-else
-  echo "error: backup"
-fi
+}
 
+function archive {
+  echo "info: archive"
+
+  local first=$(ls -1r $DST | head -n 1)
+  mv ${DST}/${first} $ARC
+  if [[ -f ${ARC}/${first} ]]; then
+    echo "info: success"
+  fi
+}
+
+# Main #
+
+case $1 in
+  "-b")
+    backup
+    ;;
+  "-g")
+    glyph
+    ;;
+  "-a")
+    archive
+    ;;
+  *)
+    echo "what do I do?"
+    ;;
+esac
