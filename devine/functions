@@ -9,7 +9,7 @@ function build {
   --build-arg NAME=$NAME \
   --build-arg UIDN=$UIDN \
   --rm --squash-all \
-  -f buildfile \
+  -f manifest \
   -t $NAME \
   .
 }

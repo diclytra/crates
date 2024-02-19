@@ -18,7 +18,7 @@ Options:
 
 CS=()
 if [[ -z "$1" ]]; then
-  echo "missing directory. building all"
+  echo "info: building all"
   for d in $(ls -d */); do
     CS+=($(basename $d))
   done
@@ -37,13 +37,13 @@ fi
 
 for c in ${CS[@]}; do
   if [[ ! -d $c ]]; then
-    echo "$c is not a directory"
+    echo "error: $c is not a directory"
     exit 1
   fi
   cd $c
 
   if [[ ! -f ./functions  ]]; then
-    echo "missing functions file"
+    echo "error: missing functions file"
     exit 1
   fi
   . functions
