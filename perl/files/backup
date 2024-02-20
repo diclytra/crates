@@ -2,20 +2,19 @@
 
 SRC=/data/safe/vault
 DST=/data/fort/backup
-ARC=/data/fort/archive
 STG=/data/safe/stage
 MNT=$HOME/vault
 
 STP="$(date +%y%m%d%H%M)"
 RET="10"
 
-if ! ls $SRC $DST $ARC $SRG $MNT &>/dev/null; then
-  echo "error: missing main directories"
-  exit 1
-fi
-
 function glyph {
   echo "info: glyphs"
+
+  if ! ls $STG $MNT &>/dev/null; then
+    echo "error: missing directories"
+    exit 1
+  fi
 
   local name="glyphs"
   local file=${name}-${STP}.txz
@@ -55,6 +54,11 @@ function glyph {
 function backup {
   echo "info: backup"
 
+  if ! ls $SRC $DST &>/dev/null; then
+    echo "error: missing directories"
+    exit 1
+  fi
+
   local name="vault"
   local file=${DST}/${name}-${STP}.txz
 
@@ -81,6 +85,11 @@ function backup {
 
 function restore {
   echo "info: restore"
+
+  if ! ls $SRC $DST &>/dev/null; then
+    echo "error: missing directories"
+    exit 1
+  fi
   local pld=0
 
   if [[ -d $SRC ]]; then
@@ -99,7 +108,7 @@ function restore {
   fi
 
   local first=$(ls -1r $DST | head -n 1)
-  tar -xJvf ${DST}/${first} $SRC
+  tar -xJvf ${DST}/${first} -C ${SRC%/*}
   if [[ ! -d $SRC ]]; then
     echo "error: restor"
     if [[ $pld == 1 ]]; then
