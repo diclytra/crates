@@ -6,11 +6,11 @@ ARG NAME
 
 LABEL name=$NAME
 LABEL version=$VERS
-LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
+LABEL maintainer="Nero Dicentra <enthalpic@proton.me>"
 
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache sudo gnupg gocryptfs xz tzdata
+RUN apk add --no-cache sudo gnupg gocryptfs xz tzdata neovim
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
@@ -21,7 +21,7 @@ USER $UIDN
 WORKDIR /home/$UIDN
 RUN mkdir -p ~/vault
 COPY files/backup utils/
-RUN echo 'alias vo="gocryptfs -i 5m -nosyslog -q /data/vault/ $HOME/vault/"' >> .profile
+RUN echo 'alias vo="gocryptfs -q -i 5m -nosyslog /data/safe/vault/ $HOME/vault/"' >> .profile
 RUN echo 'alias vc="fusermount -u $HOME/vault/"' >> .profile
 
 CMD ["/bin/ash","-l"]

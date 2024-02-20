@@ -9,14 +9,15 @@ function build {
   --build-arg NAME=$NAME \
   --build-arg UIDN=$UIDN \
   --rm --squash-all \
-  -f buildfile \
+  -f manifest \
   -t $NAME \
   .
 }
 
 function run {
   echo "info: running $NAME"
-  [[ ! -d $HOME/safe || ! -e $HOME/safe ]] && echo "error: broken symlink: $HOME/safe" && exit 1
+  [[ ! -d $HOME/safe ]] && echo "error: $HOME/safe" && exit 1
+  [[ ! -d $HOME/fort ]] && echo "error: $HOME/fort" && exit 1
 
   podman run \
   -itd \
@@ -24,7 +25,8 @@ function run {
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v $HOME/safe:/data \
+  -v $HOME/safe:/data/safe \
+  -v $HOME/fort:/data/fort \
   $NAME
 }
 

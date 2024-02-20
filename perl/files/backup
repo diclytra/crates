@@ -1,9 +1,9 @@
 #!/bin/sh
 
-SRC=/data/vault
-DST=/data/backup
-ARC=/data/archive
-STG=/data/stage
+SRC=/data/safe/vault
+DST=/data/fort/backup
+ARC=/data/fort/archive
+STG=/data/safe/stage
 MNT=$HOME/vault
 
 STP="$(date +%y%m%d%H%M)"
@@ -79,12 +79,34 @@ function backup {
   fi
 }
 
-function archive {
-  echo "info: archive"
+function restore {
+  echo "info: restore"
+  local pld=0
+
+  if [[ -d $SRC ]]; then
+    echo "warn: vault exists. moving to old"
+    if [[ -d ${SRC}.old ]]; then
+      echo "error: old exists"
+      exit 1
+    fi
+    mv $SRC ${SRC}.old
+    if [[ $? != 0 ]]; then
+      echo "error: create old"
+      exit 1
+    else
+      old=1
+    fi
+  fi
 
   local first=$(ls -1r $DST | head -n 1)
-  mv ${DST}/${first} $ARC
-  if [[ -f ${ARC}/${first} ]]; then
+  tar -xJvf ${DST}/${first} $SRC
+  if [[ ! -d $SRC ]]; then
+    echo "error: restor"
+    if [[ $pld == 1 ]]; then
+      echo "info: restoring old"
+      mv ${SRC}.old $SRC
+    fi
+  else
     echo "info: success"
   fi
 }
@@ -92,16 +114,13 @@ function archive {
 # Main #
 
 case $1 in
-  "-b")
-    backup
-    ;;
   "-g")
     glyph
     ;;
-  "-a")
-    archive
+  "-r")
+    restore
     ;;
   *)
-    echo "what do I do?"
+    backup
     ;;
 esac
