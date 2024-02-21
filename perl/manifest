@@ -21,8 +21,7 @@ USER $UIDN
 WORKDIR /home/$UIDN
 RUN mkdir -p ~/vault
 COPY files/backup utils/
-RUN echo 'alias vo="gocryptfs -q -i 5m -nosyslog /data/safe/vault/ $HOME/vault/"' >> .profile
-RUN echo 'alias vc="fusermount -u $HOME/vault/"' >> .profile
+COPY files/profile .profile
 
 CMD ["/bin/ash","-l"]
 
