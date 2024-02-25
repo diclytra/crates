@@ -21,6 +21,7 @@ function run {
     echo "volume $NAME doesn't exist. creating..."
     podman volume create $NAME
   fi
+  [[ ! -d $HOME/.gnupg ]] && echo "error: $HOME/.gnupg" && exit 1
 
   podman run \
   -itd \
@@ -29,7 +30,7 @@ function run {
   --hostname $NAME \
   --name $NAME \
   -v $NAME:/data \
-  -v $HOME/.ssh:/home/$UIDN/.ssh \
+  -v $HOME/.gnupg:/home/$UIDN/.gnupg \
   -p 1234:1234 \
   $NAME
 }

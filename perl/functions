@@ -18,6 +18,7 @@ function run {
   echo "info: running $NAME"
   [[ ! -d $HOME/safe ]] && echo "error: $HOME/safe" && exit 1
   [[ ! -d $HOME/fort ]] && echo "error: $HOME/fort" && exit 1
+  [[ ! -d $HOME/.gnupg ]] && echo "error: $HOME/.gnupg" && exit 1
 
   podman run \
   -itd \
@@ -27,6 +28,7 @@ function run {
   --name $NAME \
   -v $HOME/safe:/data/safe \
   -v $HOME/fort:/data/fort \
+  -v $HOME/.gnupg:/home/$UIDN/.gnupg \
   $NAME
 }
 
