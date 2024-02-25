@@ -8,6 +8,13 @@ MNT=$HOME/vault
 STP="$(date +%y%m%d%H%M)"
 RET="10"
 
+function help {
+  echo "Options:"
+  echo -e "\t-r - restore latest vault"
+  echo -e "\t-b - backup vault"
+  echo -e "\t-g - encrypt glyphs only"
+}
+
 function glyph {
   echo "info: glyphs"
 
@@ -86,21 +93,21 @@ function backup {
 function restore {
   echo "info: restore"
 
-  if ! ls $SRC $DST &>/dev/null; then
-    echo "error: missing directories"
+  if ! ls $DST &>/dev/null; then
+    echo "error: missing backup directory"
     exit 1
   fi
   local pld=0
 
   if [[ -d $SRC ]]; then
-    echo "warn: vault exists. moving to old"
+    echo "warn: vault exists: saving"
     if [[ -d ${SRC}.old ]]; then
-      echo "error: old exists"
-      exit 1
+      echo "warn: old vault exists: removing"
+      rm -rf ${SRC}.old
     fi
     mv $SRC ${SRC}.old
     if [[ $? != 0 ]]; then
-      echo "error: create old"
+      echo "error: create vault backup"
       exit 1
     else
       old=1
@@ -108,6 +115,7 @@ function restore {
   fi
 
   local first=$(ls -1r $DST | head -n 1)
+  echo "info: restoring $first"
   tar -xJvf ${DST}/${first} -C ${SRC%/*}
   if [[ ! -d $SRC ]]; then
     echo "error: restor"
@@ -117,6 +125,10 @@ function restore {
     fi
   else
     echo "info: success"
+    if [[ -d ${SRC}.old ]]; then
+      echo "info: preserving saved vault"
+      mv ${SRC}.old ${SRC}-${STP}.old
+    fi
   fi
 }
 
@@ -129,7 +141,10 @@ case $1 in
   "-r")
     restore
     ;;
-  *)
+  "-b")
     backup
+    ;;
+  *)
+    help
     ;;
 esac

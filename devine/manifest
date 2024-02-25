@@ -14,7 +14,7 @@ LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 RUN apk upgrade -U --no-cache
 RUN apk add --no-cache \
-go git curl neovim tmux nodejs yarn sudo openssh gpg gpg-agent pinentry-tty tzdata
+go git curl neovim tmux nodejs yarn sudo openssh-client gpg gpg-agent pinentry-tty tzdata
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 

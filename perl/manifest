@@ -10,7 +10,7 @@ LABEL maintainer="Nero Dicentra <enthalpic@proton.me>"
 
 
 RUN apk upgrade -U --no-cache
-RUN apk add --no-cache sudo openssh gpg gpg-agent pinentry-tty gocryptfs xz tzdata neovim
+RUN apk add --no-cache sudo openssh-client gpg gpg-agent pinentry-tty gocryptfs xz tzdata neovim
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
 RUN adduser -D $UIDN && addgroup $UIDN wheel
