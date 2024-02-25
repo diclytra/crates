@@ -16,7 +16,9 @@ function build {
 
 function run {
   echo "info: running $NAME"
-  [[ ! -d $HOME/safe ]] && echo "error: $HOME/safe" && exit 1
+  if  [[ ! -d $HOME/safe ]]; then
+    mkdir -p $HOME/safe/stage
+  fi
   [[ ! -d $HOME/fort ]] && echo "error: $HOME/fort" && exit 1
   [[ ! -d $HOME/.gnupg ]] && echo "error: $HOME/.gnupg" && exit 1
 
