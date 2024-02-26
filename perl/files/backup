@@ -1,9 +1,12 @@
 #!/bin/sh
 
-SRC=/data/safe/vault
-DST=/data/fort/backup
-STG=/data/safe/stage
-MNT=$HOME/vault
+SAFE="/data/safe"
+FORT="/data/fort"
+NAME="vault"
+VLT="${SAFE}/${NAME}"
+BKP="${FORT}/backup"
+STG="${SAFE}/stage"
+MNT="${HOME}/${NAME}"
 
 STP="$(date +%y%m%d%H%M)"
 RET="10"
@@ -13,18 +16,23 @@ function help {
   echo -e "\t-r - restore latest vault"
   echo -e "\t-b - backup vault"
   echo -e "\t-g - encrypt glyphs only"
+  echo -e "\t-s - sync latest backup"
+  echo -e "\t-c - clean old saves"
 }
 
 function glyph {
   echo "info: glyphs"
 
-  if ! ls $STG $MNT &>/dev/null; then
-    echo "error: missing directories"
+  if ! ls $STG $MNT $SAFE &>/dev/null; then
+    echo "error: directories"
     exit 1
   fi
 
+  cd $SAFE
+  local name_stp=$(ls -d -1 ${NAME}.* | grep '[[:digit:]]$' | head -n 1 | cut -d'.' -f2)
+
   local name="glyphs"
-  local file=${name}-${STP}.txz
+  local file=${name}.${name_stp}.txz
   local crypt=${file}.asc
 
   if ! mountpoint -q $MNT; then
@@ -61,21 +69,19 @@ function glyph {
 function backup {
   echo "info: backup"
 
-  if ! ls $SRC $DST &>/dev/null; then
-    echo "error: missing directories"
+  if ! ls $VLT $BKP &>/dev/null; then
+    echo "error: directories"
     exit 1
   fi
-
-  local name="vault"
-  local file=${DST}/${name}-${STP}.txz
-
 
   if mountpoint -q $MNT; then
     echo "error: vault is mounted"
     exit 1
   fi
 
-  tar -cJvf $file -C ${SRC%/*} ${SRC##*/}
+  cd $SAFE
+  local file=${BKP}/${NAME}.${STP}.txz
+  tar -chJvf $file $NAME
   if [[ $? != 0 ]]; then
     echo "error: archive"
     rm -f $file
@@ -83,53 +89,96 @@ function backup {
   fi
   echo "info: success"
 
-  local count=$(ls -1 ${DST}/vault* | wc -l)
+  local count=$(ls -1 ${BKP}/${NAME}* | wc -l)
   if [[ $count -gt $RET ]]; then
-    echo "info: shaving"
-    rm -f $(ls -1r ${DST}/vault* | tail -n +${RET})
+    echo "info: shave"
+    rm -f $(ls -1r ${BKP}/${NAME}* | tail -n +${RET})
   fi
 }
 
 function restore {
   echo "info: restore"
 
-  if ! ls $DST &>/dev/null; then
-    echo "error: missing backup directory"
+  if ! ls $BKP &>/dev/null; then
+    echo "error: directories"
     exit 1
   fi
-  local pld=0
 
-  if [[ -d $SRC ]]; then
-    echo "warn: vault exists: saving"
-    if [[ -d ${SRC}.old ]]; then
-      echo "warn: old vault exists: removing"
-      rm -rf ${SRC}.old
-    fi
-    mv $SRC ${SRC}.old
+  cd $SAFE
+  if [[ -L $NAME ]]; then
+    echo "info: remove vault link"
+    rm -f $NAME
+  fi
+
+  local name=$(ls -d -1 ${NAME}.* | grep '[[:digit:]]$' | head -n 1)
+  local first=$(ls -1r $BKP | head -n 1)
+  local first_stp=$(echo $first | cut -d'.' -f2)
+  local save=0
+  local res=0
+
+  if [[ ! -z $name ]] && [[ -d $name ]]; then
+    echo "warn: vault present: save"
+    mv $name ${NAME}.${STP}.save
     if [[ $? != 0 ]]; then
-      echo "error: create vault backup"
+      echo "error: save vault"
       exit 1
     else
-      old=1
+      save=1
     fi
   fi
 
-  local first=$(ls -1r $DST | head -n 1)
-  echo "info: restoring $first"
-  tar -xJvf ${DST}/${first} -C ${SRC%/*}
-  if [[ ! -d $SRC ]]; then
-    echo "error: restor"
-    if [[ $pld == 1 ]]; then
-      echo "info: restoring old"
-      mv ${SRC}.old $SRC
+  echo "info: restore $first"
+  tar -xJvf ${BKP}/${first}
+  if [[ ! -d $VLT ]]; then
+    echo "error: restore $first"
+    if [[ $save == 1 ]]; then
+      echo "info: restore back saved"
+      if [[ ! -d $name ]]; then
+        mv ${NAME}.${STP}.save $name
+      fi
     fi
   else
-    echo "info: success"
-    if [[ -d ${SRC}.old ]]; then
-      echo "info: preserving saved vault"
-      mv ${SRC}.old ${SRC}-${STP}.old
+    echo "info: link vault"
+    mv $NAME ${NAME}.${first_stp}
+    r=$?
+    ln -s ${NAME}.${first_stp} $NAME
+    r=$?
+    if [[ $r == 0 ]]; then
+      echo "info: success"
+    else
+      echo "error: link vault"
     fi
   fi
+}
+
+function sync {
+  echo "info: check latest"
+
+  cd $SAFE
+  if [[ -L $NAME ]]; then
+    echo "info: remove vault link"
+    rm -f $NAME
+  fi
+
+  local name=$(ls -d -1 ${NAME}.* | grep '[[:digit:]]$' | head -n 1)
+  local name_stp=$(echo $name | cut -d'.' -f2)
+  local first=$(ls -1r $BKP | head -n 1)
+  local first_stp=$(echo $first | cut -d'.' -f2)
+
+  if [[ $first_stp -gt $name_stp ]]; then
+    echo "info: sync latest backup"
+    restore
+  else
+    echo "info: up to date: link"
+    cd $SAFE
+    ln -s $name $NAME
+  fi
+}
+
+function clean {
+  echo "info: clean old saves"
+  cd $SAFE
+  rm -rf *.save
 }
 
 # Main #
@@ -143,6 +192,12 @@ case $1 in
     ;;
   "-b")
     backup
+    ;;
+  "-s")
+    sync
+    ;;
+  "-c")
+    clean
     ;;
   *)
     help
