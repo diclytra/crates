@@ -22,6 +22,11 @@ WORKDIR /home/$UIDN
 RUN mkdir -p ~/vault
 COPY files/backup utils/
 COPY files/profile .profile
-
+COPY files/gnupg .gnupg
+RUN mkdir -p .config/nvim
+COPY files/init.vim .config/nvim/init.vim
+USER root
+RUN chown -R $UIDN:$UIDN /home
+USER $UIDN
 CMD ["/bin/ash","-l"]
 

@@ -15,12 +15,11 @@ function build {
 }
 
 function run {
-  echo "info: running $NAME"
-  if  [[ ! -d $HOME/safe ]]; then
-    mkdir -p $HOME/safe/stage
-  fi
+  echo "info: run $NAME"
+
+  [[ ! -d $HOME/$NAME ]] && (mkdir -p $HOME/$NAME || exit 1)
+  [[ ! -d $HOME/safe ]] && (mkdir -p $HOME/safe || exit 1)
   [[ ! -d $HOME/fort ]] && echo "error: $HOME/fort" && exit 1
-  [[ ! -d $HOME/.gnupg ]] && echo "error: $HOME/.gnupg" && exit 1
 
   podman run \
   -itd \
@@ -30,7 +29,7 @@ function run {
   --name $NAME \
   -v $HOME/safe:/data/safe \
   -v $HOME/fort:/data/fort \
-  -v $HOME/.gnupg:/home/$UIDN/.gnupg \
+  -v $HOME/$NAME:/home/${UIDN}/stage \
   $NAME
 }
 

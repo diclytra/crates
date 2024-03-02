@@ -39,6 +39,10 @@ COPY files/home/profile .profile
 COPY files/home/tmux.conf .tmux.conf
 COPY files/home/gitconfig .gitconfig
 COPY files/home/eslintrc .eslintrc
+COPY files/gnupg .gnupg
+USER root
+RUN chown -R $UIDN:$UIDN /home
+USER $UIDN
 
 CMD ["/bin/ash","-l"]
 
