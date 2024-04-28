@@ -17,7 +17,8 @@ function build {
 function run {
   echo "info: running $NAME"
 
-  [[ ! -d $HOME/$NAME ]] && mkdir -p $HOME/$NAME || exit 1
+  local path="${HOME}/crates/${NAME}"
+  [[ ! -d $path ]] && (mkdir -p $path || exit 1)
 
   podman run \
   -itd \
@@ -25,7 +26,7 @@ function run {
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v $HOME/$NAME:/home/${UIDN}/stage \
+  -v ${path}:/data \
   -p 1234:1234 \
   $NAME
 }

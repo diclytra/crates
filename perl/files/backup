@@ -98,6 +98,8 @@ function backup {
     echo "info: shave"
     rm -f $(ls -1r ${BKP}/${NAME}* | tail -n +${RET})
   fi
+  echo "info: list files"
+  ls -1r ${BKP}/${NAME}*
 }
 
 function restore {
