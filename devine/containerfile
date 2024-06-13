@@ -14,7 +14,9 @@ LABEL maintainer="Nero Dicentra <nero.dicentra@gmail.com>"
 
 RUN apk upgrade -U --no-cache
 RUN apk add --no-cache \
-go git curl neovim tmux nodejs yarn sudo openssh-client gpg gpg-agent pinentry-tty tzdata
+go git curl neovim tmux nodejs yarn sudo helix tree-sitter-grammars \
+openssh-client gpg gpg-agent pinentry-tty tzdata
+
 RUN ln -sf /usr/bin/nvim /usr/bin/nv
 RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 
@@ -40,6 +42,8 @@ COPY files/home/tmux.conf .tmux.conf
 COPY files/home/gitconfig .gitconfig
 COPY files/home/eslintrc .eslintrc
 COPY files/gnupg .gnupg
+COPY files/helix .config/helix
+
 USER root
 RUN chown -R $UIDN:$UIDN /home
 USER $UIDN

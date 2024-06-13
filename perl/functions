@@ -17,8 +17,10 @@ function build {
 function run {
   echo "info: run $NAME"
 
-  local path="${HOME}/crates/${NAME}"
-  [[ ! -d $path ]] && (mkdir -p $path || exit 1)
+  local share_path="${HOME}/crates/${NAME}"
+  local gpg_path="${HOME}/.gnupg"
+  [[ ! -d $share_path ]] && (mkdir -p $share_path || exit 1)
+  [[ ! -d $gpg_path ]] && (mkdir -p $gpg_path || exit 1)
 
   podman run \
   -itd \
@@ -26,7 +28,9 @@ function run {
   --userns=keep-id \
   --hostname $NAME \
   --name $NAME \
-  -v ${path}:/data \
+  --network none \
+  -v ${share_path}:/data \
+  -v ${gpg_path}:/home/${UIDN}/.gnupg \
   $NAME
 }
 

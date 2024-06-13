@@ -16,6 +16,12 @@ Options:
 "
 }
 
+function clean {
+	local name=$1
+	podman rm -f $name
+	podman rmi -f $name
+}
+
 CS=()
 if [[ -z "$1" ]]; then
 	echo "info: building all"
@@ -56,6 +62,10 @@ for c in ${CS[@]}; do
 		run
 		;;
 	deploy)
+		build && run
+		;;
+	update)
+		clean $c
 		build && run
 		;;
 	*)
