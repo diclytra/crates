@@ -1,0 +1,10 @@
+[user]
+	signingkey = 62D3A4CCC4531494!
+	name = Nero Dicentra
+	email = nero@asgard.id
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[push]
+        followTags = true

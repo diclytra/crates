@@ -1,0 +1,51 @@
+FROM archlinux
+
+ENV GOPRIVATE="github.com/anhuret,gitlab.com/onuris"
+ENV CGO_ENABLED="0"
+
+ARG VERS="0.1"
+ARG NAME="devbox"
+ARG UIDN="super"
+
+LABEL name=$NAME
+LABEL version=$VERS
+LABEL description="Development Environmant"
+LABEL maintainer="Nero Dicentra <nero@asgard.id>"
+
+RUN <<EOF
+pacman --noconfirm -Syu
+pacman --noconfirm -S \
+sudo less openssh git tmux go nodejs yarn helix vivid shfmt
+pacman --noconfirm -Scc
+EOF
+
+RUN ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
+
+RUN useradd -m $UIDN && usermod -a -G wheel $UIDN
+RUN mkdir -p /etc/sudoers.d
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopass
+
+USER $UIDN
+WORKDIR /home/$UIDN
+
+RUN yarn global add \
+prettier eslint bash-language-server typescript-language-server
+
+RUN <<EOF
+go install golang.org/x/tools/gopls@latest
+go install github.com/go-delve/delve/cmd/dlv@latest
+go install golang.org/x/tools/cmd/goimports@latest
+go install github.com/nametake/golangci-lint-langserver@latest
+EOF
+
+COPY files/helix .config/helix
+COPY files/bashrc .bashrc
+COPY files/gnupg .gnupg
+COPY files/gitconfig .gitconfig
+
+USER root
+RUN chown -R $UIDN:$UIDN /home/$UIDN
+USER $UIDN
+
+CMD ["/bin/bash", "-l"]
+
