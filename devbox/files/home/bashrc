@@ -6,13 +6,10 @@ alias hx='helix'
 
 export LS_COLORS=$(vivid generate one-dark)
 export PS1="\e[01;32m[\u@\h \W]\$ \e[m "
-
-PATH="$HOME/go/bin:$HOME/.yarn/bin:$PATH"
-export PATH
+export PATH="$(yarn global bin):${HOME}/go/bin:${HOME}/script:$PATH"
 
 gpgconf --kill all &> /dev/null
 export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-gpgconf --launch gpg-agent &> /dev/null
-gpg-connect-agent updatestartuptty /bye &> /dev/null
 export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye &> /dev/null
 
