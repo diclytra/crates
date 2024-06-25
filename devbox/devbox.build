@@ -14,7 +14,8 @@ LABEL maintainer="Nero Dicentra <nero@asgard.id>"
 
 RUN <<-'EOF'
 	pacman --noconfirm -Syu
-	pacman --noconfirm -S sudo less openssh git tmux go nodejs yarn helix vivid shfmt
+	pacman --noconfirm -S \
+	fish sudo less openssh git tmux go nodejs yarn helix vivid shfmt gocryptfs python
 	pacman --noconfirm -Scc
 EOF
 
@@ -40,9 +41,9 @@ RUN <<-'EOF'
 	go install github.com/nametake/golangci-lint-langserver@latest
 EOF
 
+COPY files/fish .config/fish
 COPY files/helix .config/helix
 COPY files/gnupg .gnupg
-COPY files/home/bashrc .bashrc
 COPY files/home/gitconfig .gitconfig
 COPY files/home/tmux.conf .tmux.conf
 
@@ -51,4 +52,4 @@ RUN chmod 700 .gnupg
 RUN chown -R $UIDN:$UIDN /home/$UIDN
 USER $UIDN
 
-CMD ["tmux", "-2", "new", "-A", "-s", "main"]
+CMD ["tmux", "-2", "new", "-s", "main"]
