@@ -2,7 +2,8 @@
 
 NAME="devbox"
 UIDN="super"
-BLDF="${NAME}.build"
+BLDF="container.build"
+CLI="podman"
 
 if [[ ! -f $BLDF ]]; then
   echo "error: build file"
@@ -10,27 +11,28 @@ if [[ ! -f $BLDF ]]; then
 fi
 
 build() {
-  podman build \
+  $CLI build \
   --build-arg NAME=$NAME \
   --build-arg UIDN=$UIDN \
   -t $NAME -f $BLDF
 }
 
 run() {
-  podman run -itd \
+  $CLI run -itd \
     --privileged \
     --userns=keep-id \
     -u $UIDN \
     --name $NAME \
     --hostname $NAME \
+    --network $NAME \
     -p 1234:1234 \
-    -v ${HOME}:/home/$UIDN/work \
+    -v ${HOME}:/home/$UIDN/host \
     localhost/${NAME}
 }
 
 clean() {
-  podman rm -f $NAME
-  podman rmi -f $NAME
+  $CLI rm -f $NAME
+  $CLI rmi -f $NAME
 }
 
 case $1 in
