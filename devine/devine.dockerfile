@@ -49,4 +49,3 @@ RUN chown -R $UIDN:$UIDN /home
 USER $UIDN
 
 CMD ["/bin/ash","-l"]
-

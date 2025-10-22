@@ -1,3 +1,5 @@
 if status is-interactive
-    set fish_greeting
+    if test -d $HOME/Home
+        cd $HOME/Home
+    end
 end

@@ -1,14 +1,12 @@
 #!/bin/bash
 
-BOX="alpine"
-NAME="devbox"
+NAME="devine"
 UIDN="super"
-BLDF="${BOX}.dockerfile"
+BLDF="container.build"
 CLI="podman"
-VERS=$(date +"%y%m%d%H%M%S")
 
 if [[ ! -f $BLDF ]]; then
-  echo "error: $BLDF"
+  echo "error: build file"
   exit 1
 fi
 
@@ -16,7 +14,6 @@ build() {
   $CLI build \
   --build-arg NAME=$NAME \
   --build-arg UIDN=$UIDN \
-  --build-arg VERS=$VERS \
   -t $NAME -f $BLDF
 }
 
@@ -27,7 +24,7 @@ run() {
     -u $UIDN \
     --name $NAME \
     --hostname $NAME \
-    -p 1234:1234 \
+    -v ${HOME}:/home/$UIDN/host \
     localhost/${NAME}
 }
 

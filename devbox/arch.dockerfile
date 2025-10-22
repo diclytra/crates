@@ -15,7 +15,7 @@ LABEL maintainer="Nero Dicentra <nero@asgard.id>"
 RUN <<-'EOF'
 	pacman --noconfirm -Syu
 	pacman --noconfirm -S \
-	fish sudo less openssh git tmux go nodejs yarn helix vivid shfmt gocryptfs python
+	fish sudo less openssh git tmux go nodejs yarn helix vivid shfmt python
 	pacman --noconfirm -Scc
 EOF
 

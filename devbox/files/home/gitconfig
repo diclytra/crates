@@ -1,10 +1,16 @@
 [user]
 	signingkey = 62D3A4CCC4531494!
 	name = Nero Dicentra
-	email = nero@asgard.id
+	email = tensor@eridium.one
 [commit]
 	gpgsign = true
 [tag]
 	gpgsign = true
 [push]
-        followTags = true
+	followTags = true
+[pull]
+	rebase = false
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
+[url "git@github.com:"]
+	insteadOf = https://github.com/

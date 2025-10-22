@@ -1,0 +1,12 @@
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+
+alias tmux='tmux -2'
+alias vi="/usr/bin/nvim"
+
+export PATH="$(yarn global bin):${HOME}/go/bin:${HOME}/utils:$PATH"
+export PS1="\e[01;35m[\u@\h \W]\$ \e[m "
+
+export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+gpg-connect-agent updatestartuptty /bye > /dev/null
+
+[ -z $TMUX  ] && { tmux attach || tmux new && exit;}
