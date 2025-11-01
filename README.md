@@ -1,1 +1,1 @@
-# Development container
+# Development container for GoLang
