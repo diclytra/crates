@@ -1,2 +1,5 @@
 IMAGE=fedora
 NAME=devine
+UIDN=super
+CLI=podman
+VOLUME=/Users/nero/Home/devine

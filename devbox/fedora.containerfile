@@ -17,7 +17,7 @@ RUN <<-'EOF'
 	echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
 	dnf -y update
 	dnf -y install \
-	fish go git tmux nodejs yarn helix shfmt gnupg pinentry-tty golangci-lint
+	fish go python git tmux nodejs yarn helix shfmt gnupg pinentry-tty #golangci-lint
 EOF
 
 RUN <<-'EOF'
@@ -45,7 +45,7 @@ RUN <<-'EOF'
 	go install github.com/go-delve/delve/cmd/dlv@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/nametake/golangci-lint-langserver@latest
-	#go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 EOF
 
 COPY files/fish .config/fish

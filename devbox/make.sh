@@ -1,5 +1,6 @@
 #!/bin/bash
 
+VERS=$(date +"%y%m%d%H%M%S")
 ACTION="build"
 if [[ ! -z $1 ]]; then
   ACTION=$1
@@ -8,6 +9,7 @@ fi
 echo "info: action $ACTION"
 sleep 2
 
+echo "info: parsing config"
 CONF=$(<config)
 for I in $CONF; do
   K=$(echo "$I" | cut -d '=' -f 1)
@@ -17,34 +19,27 @@ for I in $CONF; do
     echo "error: ${!K}"
     exit 1
   fi
-  # echo "${K} = ${!K}"
+  echo "${K} = ${!K}"
 done
+sleep 2
 
 if [[ $ACTION == "build" ]]; then
   if [[ ! -z $1 ]]; then
     IMAGE=$1
     shift
   fi
-  echo "info: image $IMAGE" 
-  sleep 2
 fi
 
 if [[ ! -z $1 ]]; then
   NAME=$1
   shift
 fi
-echo "info: name $NAME" 
-sleep 2
 
 FILE="${IMAGE}.containerfile"
 if [[ ! -f $FILE ]]; then
   echo "error: build file"
   exit 1
 fi
-
-UIDN="super"
-CLI="podman"
-VERS=$(date +"%y%m%d%H%M%S")
 
 build() {
   $CLI build \
@@ -62,6 +57,7 @@ run() {
     --name $NAME \
     --hostname $NAME \
     -p 1234:1234 \
+    -v ${VOLUME}:/home/${UIDN}/host \
     localhost/${NAME}
 }
 
