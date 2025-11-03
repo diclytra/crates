@@ -19,11 +19,16 @@ select = "underline"
 [editor.statusline]
 center = ["version-control"]
 
-[keys.normal]
-"C-x" = ":w"
-
-[keys.select]
-"C-x" = ["normal_mode", ":w"]
+[keys.normal.f]
+k = ":w"
+h = ":x"
+q = ":q"
+  
+[keys.normal."+"]
+m = ":run-shell-command make"
+c = ":run-shell-command cargo build"
+t = ":run-shell-command cargo test"
 
 [keys.insert]
-"C-x" = ["normal_mode", ":w"]
+"C-[" = "normal_mode"
+

@@ -34,7 +34,7 @@ USER $UIDN
 WORKDIR /home/$UIDN
 
 RUN mkdir -p .ssh && ssh-keygen -t ed25519 -N "" -q -f .ssh/id_ed25519
-COPY files/home/ssh_config .ssh/ssh_config
+COPY files/home/ssh_config .ssh/config
 
 RUN	yarn global add \
 prettier eslint bash-language-server typescript-language-server \
