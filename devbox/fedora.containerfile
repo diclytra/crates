@@ -54,10 +54,10 @@ RUN <<-EOF
 EOF
 
 RUN <<-EOF
-	yes | fish_config theme save Tomorrow
-	yes | fish_config prompt save minimalist
-	fish_greeting ''
-	fish_add_path -U /home/${UIDN}/.local/bin /home/${UIDN}/.yarn/bin /home/${UIDN}/go/bin
+	fish -c "yes | fish_config theme save Tomorrow"
+	fish -c "yes | fish_config prompt save minimalist"
+	fish -c "set -U fish_greeting"
+	fish -c "fish_add_path -U /home/${UIDN}/.local/bin /home/${UIDN}/.yarn/bin /home/${UIDN}/go/bin"
 EOF
 
 COPY files/fish .config/fish

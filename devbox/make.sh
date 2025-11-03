@@ -65,6 +65,7 @@ run() {
 clean() {
 	$CLI rm -f $NAME
 	$CLI rmi -f $NAME
+	$CLI image prune -af
 }
 
 case $ACTION in
