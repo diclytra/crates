@@ -13,14 +13,14 @@ LABEL version=$VERS
 LABEL description="Development Environmant"
 LABEL maintainer="Nero Dicentra <tensor@eridium.one>"
 
-RUN <<-'EOF'
-	echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
+RUN <<-EOF
+	echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
 	dnf -y update
 	dnf -y install \
-	fish go python git tmux nodejs yarn helix shfmt gnupg pinentry-tty #golangci-lint
+	fish go python pip pipx git tmux nodejs yarn helix shfmt gnupg pinentry-tty
 EOF
 
-RUN <<-'EOF'
+RUN <<-EOF
 	useradd -mU $UIDN
 	usermod -aG wheel $UIDN
 	mkdir -p /etc/sudoers.d
@@ -40,12 +40,24 @@ RUN	yarn global add \
 prettier eslint bash-language-server typescript-language-server \
 vscode-css-languageservice yaml-language-server
 
-RUN <<-'EOF'
+RUN <<-EOF
 	go install golang.org/x/tools/gopls@latest
 	go install github.com/go-delve/delve/cmd/dlv@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/nametake/golangci-lint-langserver@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+EOF
+
+RUN <<-EOF
+	pipx install python-lsp-server ruff black
+	pipx inject python-lsp-server python-lsp-ruff python-lsp-black
+EOF
+
+RUN <<-EOF
+	yes | fish_config theme save Tomorrow
+	yes | fish_config prompt save minimalist
+	fish_greeting ''
+	fish_add_path -U /home/${UIDN}/.local/bin /home/${UIDN}/.yarn/bin /home/${UIDN}/go/bin
 EOF
 
 COPY files/fish .config/fish
