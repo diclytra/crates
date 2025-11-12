@@ -1,4 +1,4 @@
-theme = "heisenberg"
+theme = "dracula_at_night"
 
 [editor]
 bufferline = "always"

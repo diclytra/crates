@@ -1,0 +1,6 @@
+[nushell]
+name=Nushell
+baseurl=https://yum.fury.io/nushell/
+gpgcheck=0
+enabled=1
+gpgkey=https://yum.fury.io/nushell/gpg.key

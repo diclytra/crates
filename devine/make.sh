@@ -7,8 +7,6 @@ if [[ ! -z $1 ]]; then
 	ACTION=$1
 	shift
 fi
-echo "info: action $ACTION"
-sleep 2
 
 echo "info: parsing config"
 CONF=$(<.config)
@@ -16,30 +14,25 @@ for I in $CONF; do
 	K=$(echo "$I" | cut -d '=' -f 1)
 	V=$(echo "$I" | cut -d '=' -f 2)
 	declare "${K}"="${V}"
-	if [[ -z ${!K} ]]; then
-		echo "error: ${!K}"
-		exit 1
-	fi
 	echo "${K} = ${!K}"
 done
+echo "info: action $ACTION"
 sleep 2
-
-if [[ $ACTION == "build" ]]; then
-	if [[ ! -z $1 ]]; then
-		IMAGE=$1
-		shift
-	fi
-fi
 
 if [[ ! -z $1 ]]; then
 	NAME=$1
 	shift
 fi
 
-FILE="${IMAGE}.containerfile"
+FILE="${NAME}.containerfile"
 if [[ ! -f $FILE ]]; then
 	echo "error: build file"
 	exit 1
+fi
+
+if [[ ACTION == "run" ]] && [[ ! -z $1 ]]; then
+	VOLUME=$1
+	shift
 fi
 
 build() {
@@ -51,15 +44,23 @@ build() {
 }
 
 run() {
-	$CLI run -itd \
-		--privileged \
-		--userns=keep-id \
-		-u $UIDN \
-		--name $NAME \
-		--hostname $NAME \
-		-p 1234:1234 \
-		-v ${VOLUME}:/home/${UIDN}/host \
+	local com vol
+	if [[ ! -z $VOLUME ]] && [[ -d $VOLUME ]]; then
+		vol="-v ${VOLUME}:/home/${UIDN}/host"
+	fi
+
+	com="
+		$CLI run -itd
+		--privileged
+		--userns=keep-id
+		-u $UIDN
+		--name $NAME
+		--hostname $NAME
+		-p 1234:1234
+		$vol
 		localhost/${NAME}
+	"
+	$com
 }
 
 clean() {
