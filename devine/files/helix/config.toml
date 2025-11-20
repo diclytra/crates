@@ -1,9 +1,9 @@
-theme = "dracula_at_night"
+theme = "base16_transparent"
 
 [editor]
 bufferline = "always"
 text-width = 96
-cursorline = true
+cursorline = false
 rulers = [96]
 true-color = true
 line-number = "relative"

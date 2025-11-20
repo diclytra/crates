@@ -69,7 +69,7 @@ COPY files/gnupg .gnupg
 COPY files/helix .config/helix
 COPY files/home/tmux.conf .tmux.conf
 COPY files/home/gitconfig .gitconfig
-COPY files/nushell/user-config.nu .config/nushell/config.nu
+COPY files/nushell/config.nu .config/nushell/config.nu
 COPY files/ssh .ssh
 
 USER root
@@ -77,7 +77,8 @@ RUN chmod 700 .gnupg
 RUN chown -R $UIDN:$UIDN /home/$UIDN
 RUN usermod -s /usr/bin/nu $UIDN
 RUN usermod -s /usr/bin/nu root
-COPY files/nushell/root-config.nu /root/.config/nushell/config.nu
+COPY files/root/config.nu /root/.config/nushell/config.nu
 USER $UIDN
 
-ENTRYPOINT ["tmux", "-2", "new", "-s", "main"]
+#ENTRYPOINT ["tmux", "-2", "new", "-s", "main"]
+ENTRYPOINT ["/usr/bin/nu", "-i", "-l"]
