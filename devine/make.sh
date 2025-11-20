@@ -41,12 +41,15 @@ build() {
 		--build-arg UIDN=$UIDN \
 		--build-arg VERS=$VERS \
 		-t $NAME -f $FILE
+
+	$CLI tag $NAME ${NAME}:${VERS}
+	$CLI tag ${NAME}:${VERS} ${NAME}:latest
 }
 
 run() {
 	local com vol
 	if [[ ! -z $VOLUME ]] && [[ -d $VOLUME ]]; then
-		vol="-v ${VOLUME}:/home/${UIDN}/host"
+		vol="-v ${VOLUME}:/data/host"
 	fi
 
 	com="
@@ -58,7 +61,7 @@ run() {
 		--hostname $NAME
 		-p 1234:1234
 		$vol
-		localhost/${NAME}
+		localhost/${NAME}:latest
 	"
 	$com
 }

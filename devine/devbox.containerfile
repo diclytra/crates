@@ -17,9 +17,12 @@ ENV HOSTNAME=$NAME
 COPY files/root/nushell.repo /etc/yum.repos.d/nushell.repo
 RUN <<-EOF
 	echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
+	dnf -y copr enable atim/starship
 	dnf -y update
 	dnf -y install \
-	go python pip pipx git tmux nodejs yarn helix shfmt gnupg pinentry-tty nushell gocryptfs
+	go python pip pipx git tmux nodejs yarn helix shfmt \
+	gnupg pinentry-tty nushell gocryptfs starship \
+	python3-pandas python3-numpy python3-llama-cpp-python python3-matplotlib python3-seaborn
 EOF
 
 RUN <<-EOF
@@ -36,7 +39,6 @@ USER $UIDN
 WORKDIR /home/$UIDN
 
 RUN mkdir -p .ssh && ssh-keygen -t ed25519 -N "" -q -f .ssh/id_ed25519
-RUN mkdir -p code repos
 
 RUN	yarn global add \
 prettier eslint bash-language-server typescript-language-server \
@@ -53,22 +55,29 @@ EOF
 RUN <<-EOF
 	pipx install python-lsp-server ruff
 	pipx inject python-lsp-server python-lsp-ruff
+	pip install datasets==3.6.0
 EOF
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN curl -fsSL https://install.julialang.org | sh -s -- -y
+
+RUN nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
+RUN nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
 
 RUN rm -rf .ssh
 COPY files/gnupg .gnupg
 COPY files/helix .config/helix
 COPY files/home/tmux.conf .tmux.conf
 COPY files/home/gitconfig .gitconfig
-COPY files/nushell .config/nushell
+COPY files/nushell/user-config.nu .config/nushell/config.nu
 COPY files/ssh .ssh
 
 USER root
 RUN chmod 700 .gnupg
 RUN chown -R $UIDN:$UIDN /home/$UIDN
+RUN usermod -s /usr/bin/nu $UIDN
+RUN usermod -s /usr/bin/nu root
+COPY files/nushell/root-config.nu /root/.config/nushell/config.nu
 USER $UIDN
 
 ENTRYPOINT ["tmux", "-2", "new", "-s", "main"]
