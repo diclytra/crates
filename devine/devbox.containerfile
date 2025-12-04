@@ -20,12 +20,8 @@ RUN <<-EOF
 	dnf -y update
 	dnf -y install \
 	go python pip pipx nodejs yarn shfmt git \
-	tmux helix gnupg pinentry-tty nushell gocryptfs \
-	python3-pandas python3-numpy python3-llama-cpp-python \
-	python3-matplotlib python3-seaborn python3-virtualenv
+	tmux helix gnupg pinentry-tty nushell gocryptfs
 EOF
-
-RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 RUN <<-EOF
 	useradd -mU $UIDN
@@ -34,6 +30,8 @@ RUN <<-EOF
 	echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopassword
 	ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 EOF
+
+RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 USER $UIDN
 WORKDIR /home/$UIDN
@@ -55,6 +53,8 @@ EOF
 RUN <<-EOF
 	pipx install python-lsp-server ruff
 	pipx inject python-lsp-server python-lsp-ruff
+	pip install -U pip
+	pip install numpy pandas seaborn plotly 
 EOF
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -77,5 +77,4 @@ RUN usermod -s /usr/bin/nu $UIDN
 RUN usermod -s /usr/bin/nu root
 
 USER $UIDN
-
 ENTRYPOINT ["/usr/bin/nu", "-i", "-l"]
