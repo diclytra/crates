@@ -14,16 +14,18 @@ ENV CGO_ENABLED="0"
 ENV GOPATH="/home/$UIDN/.go"
 ENV HOSTNAME=$NAME
 
-COPY files/root/nushell.repo /etc/yum.repos.d/nushell.repo
+COPY data/root/nushell.repo /etc/yum.repos.d/nushell.repo
 RUN <<-EOF
 	echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
-	dnf -y copr enable atim/starship
 	dnf -y update
 	dnf -y install \
-	go python pip pipx git tmux nodejs yarn helix shfmt \
-	gnupg pinentry-tty nushell gocryptfs starship \
-	python3-pandas python3-numpy python3-llama-cpp-python python3-matplotlib python3-seaborn
+	go python pip pipx nodejs yarn shfmt git \
+	tmux helix gnupg pinentry-tty nushell gocryptfs \
+	python3-pandas python3-numpy python3-llama-cpp-python \
+	python3-matplotlib python3-seaborn python3-virtualenv
 EOF
+
+RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 RUN <<-EOF
 	useradd -mU $UIDN
@@ -55,7 +57,7 @@ EOF
 RUN <<-EOF
 	pipx install python-lsp-server ruff
 	pipx inject python-lsp-server python-lsp-ruff
-	pip install datasets==3.6.0
+	#pip install datasets==3.6.0
 EOF
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -65,19 +67,19 @@ RUN nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
 RUN nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
 
 RUN rm -rf .ssh
-COPY files/gnupg .gnupg
-COPY files/helix .config/helix
-COPY files/home/tmux.conf .tmux.conf
-COPY files/home/gitconfig .gitconfig
-COPY files/nushell/config.nu .config/nushell/config.nu
-COPY files/ssh .ssh
+COPY data/gnupg .gnupg
+COPY data/helix .config/helix
+COPY data/home/tmux.conf .tmux.conf
+COPY data/home/gitconfig .gitconfig
+COPY data/nushell/config.nu .config/nushell/config.nu
+COPY data/ssh .ssh
 
 USER root
 RUN chmod 700 .gnupg
 RUN chown -R $UIDN:$UIDN /home/$UIDN
 RUN usermod -s /usr/bin/nu $UIDN
 RUN usermod -s /usr/bin/nu root
-COPY files/root/config.nu /root/.config/nushell/config.nu
+COPY data/root/config.nu /root/.config/nushell/config.nu
 USER $UIDN
 
 #ENTRYPOINT ["tmux", "-2", "new", "-s", "main"]
