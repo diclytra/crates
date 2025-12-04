@@ -49,7 +49,7 @@ build() {
 run() {
 	local com vol
 	if [[ ! -z $VOLUME ]] && [[ -d $VOLUME ]]; then
-		vol="-v ${VOLUME}:/data/host"
+		vol="-v ${VOLUME}:/home/${UIDN}/host"
 	fi
 
 	com="
@@ -59,7 +59,7 @@ run() {
 		-u $UIDN
 		--name $NAME
 		--hostname $NAME
-		-p 1234:1234
+		-p 1024-65535:1024-65535
 		$vol
 		localhost/${NAME}:latest
 	"

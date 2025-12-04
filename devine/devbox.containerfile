@@ -32,8 +32,6 @@ RUN <<-EOF
 	usermod -aG wheel $UIDN
 	mkdir -p /etc/sudoers.d
 	echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopassword
-	mkdir -p /data/host
-	chown -R $UIDN:$UIDN /data/host
 	ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 EOF
 
@@ -57,7 +55,6 @@ EOF
 RUN <<-EOF
 	pipx install python-lsp-server ruff
 	pipx inject python-lsp-server python-lsp-ruff
-	#pip install datasets==3.6.0
 EOF
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -66,7 +63,6 @@ RUN curl -fsSL https://install.julialang.org | sh -s -- -y
 RUN nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
 RUN nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
 
-RUN rm -rf .ssh
 COPY data/gnupg .gnupg
 COPY data/helix .config/helix
 COPY data/home/tmux.conf .tmux.conf
@@ -79,8 +75,7 @@ RUN chmod 700 .gnupg
 RUN chown -R $UIDN:$UIDN /home/$UIDN
 RUN usermod -s /usr/bin/nu $UIDN
 RUN usermod -s /usr/bin/nu root
-COPY data/root/config.nu /root/.config/nushell/config.nu
+
 USER $UIDN
 
-#ENTRYPOINT ["tmux", "-2", "new", "-s", "main"]
 ENTRYPOINT ["/usr/bin/nu", "-i", "-l"]
