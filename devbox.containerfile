@@ -15,12 +15,13 @@ ENV GOPATH="/home/$UIDN/.go"
 ENV HOSTNAME=$NAME
 
 COPY data/root/nushell.repo /etc/yum.repos.d/nushell.repo
+COPY data/root/hashicorp.repo /etc/yum.repos.d/hashicorp.repo
 RUN <<-EOF
 	echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
 	dnf -y update
 	dnf -y install \
-	go python pip pipx nodejs yarn shfmt git \
-	tmux helix gnupg pinentry-tty nushell gocryptfs
+	go python pip pipx nodejs yarn shfmt git tmux awscli2 \
+	helix gnupg pinentry-tty nushell gocryptfs terraform 
 EOF
 
 RUN <<-EOF
