@@ -21,7 +21,9 @@ RUN <<-EOF
 	dnf -y update
 	dnf -y install \
 	go python pip pipx nodejs yarn shfmt git tmux awscli2 \
-	helix gnupg pinentry-tty nushell gocryptfs terraform 
+	helix gnupg pinentry-tty nushell gocryptfs terraform \
+	podman fuse-overlayfs
+	curl -sS https://starship.rs/install.sh | sh -s -- -y
 EOF
 
 RUN <<-EOF
@@ -31,8 +33,6 @@ RUN <<-EOF
 	echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/nopassword
 	ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
 EOF
-
-RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 USER $UIDN
 WORKDIR /home/$UIDN
@@ -58,11 +58,15 @@ RUN <<-EOF
 	pip install numpy pandas seaborn plotly 
 EOF
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN curl -fsSL https://install.julialang.org | sh -s -- -y
+RUN <<-EOF
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+	curl -fsSL https://install.julialang.org | sh -s -- -y
+EOF
 
-RUN nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
-RUN nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
+RUN <<-EOF
+	nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
+	nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
+EOF
 
 COPY data/gnupg .gnupg
 COPY data/helix .config/helix
@@ -72,10 +76,13 @@ COPY data/nushell/config.nu .config/nushell/config.nu
 COPY data/ssh .ssh
 
 USER root
-RUN chmod 700 .gnupg
-RUN chown -R $UIDN:$UIDN /home/$UIDN
-RUN usermod -s /usr/bin/nu $UIDN
-RUN usermod -s /usr/bin/nu root
+RUN <<-EOF
+	chmod 700 .gnupg
+	chown -R $UIDN:$UIDN /home/$UIDN
+	usermod -s /usr/bin/nu $UIDN
+	usermod -s /usr/bin/nu root
+	chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
+EOF
 
 USER $UIDN
 ENTRYPOINT ["/usr/bin/nu", "-i", "-l"]
