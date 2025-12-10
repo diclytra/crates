@@ -22,7 +22,7 @@ RUN <<-EOF
 	dnf -y install \
 	go python pip pipx nodejs yarn shfmt git tmux awscli2 \
 	helix gnupg pinentry-tty nushell gocryptfs terraform \
-	podman fuse-overlayfs
+	podman fuse-overlayfs yq
 	curl -sS https://starship.rs/install.sh | sh -s -- -y
 EOF
 
