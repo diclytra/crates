@@ -1,5 +1,5 @@
 let trail = [
-  'devine/code/bin'
+  'devine/code'
   '.local/bin'  
   '.deno/bin'
   '.cargo/bin'
@@ -10,18 +10,18 @@ let trail = [
 let path = $trail | each {|t| $env.home | path join $t}
 $env.path = ($env.path | prepend $path | uniq)
 
-$env.nu_lib_dirs = [($env.home | path join 'code/nu')]
+$env.nu_lib_dirs = [($env.home | path join 'devine/nu')]
 $env.config.datetime_format.normal = "%y/%m/%d %I:%M:%S%p"
 $env.config.table.index_mode = 'auto'
 $env.config.buffer_editor = 'hx'
 $env.config.show_banner = false
 $env.config.table.mode = 'light'
 
-gpgconf --kill all o> /dev/null
-gpgconf --launch gpg-agent o> /dev/null
-$env.ssh_auth_sock = (gpgconf --list-dirs agent-ssh-socket)
-$env.gpg_tty = (tty)
-gpg-connect-agent updatestartuptty /bye >/dev/null
+gpgconf --kill all | ignore
+gpgconf --launch gpg-agent | ignore
+$env.SSH_AUTH_SOCK = (gpgconf --list-dirs agent-ssh-socket)
+$env.GPG_TTY = (tty)
+gpg-connect-agent updatestartuptty /bye | ignore
 
 if (is-terminal -i) {
   if ($env.tmux? | is-empty) {
