@@ -49,7 +49,7 @@ build() {
 run() {
 	local com vol
 	if [[ ! -z $VOLUME ]] && [[ -d $VOLUME ]]; then
-		vol="-v ${VOLUME}:/home/${UIDN}/code"
+		vol="-v ${VOLUME}:/home/${UIDN}/devine"
 	fi
 
 	com="
@@ -57,9 +57,10 @@ run() {
 		--privileged
 		--userns=keep-id
 		-u $UIDN
-		--name $NAME
+		--name ${NAME}-${RANDOM}
 		--hostname $NAME
 		-p 1234:1234
+		-p 8000:8000
 		$vol
 		localhost/${NAME}:latest
 	"
@@ -67,8 +68,7 @@ run() {
 }
 
 clean() {
-	$CLI rm -f $NAME
-	$CLI rmi -f $NAME
+	$CLI container prune -f
 	$CLI image prune -af
 }
 
