@@ -8,6 +8,9 @@ rulers = [96]
 true-color = true
 line-number = "relative"
 
+[editor.lsp]
+auto-signature-help = false
+
 [editor.indent-guides]
 render = true
 
@@ -32,3 +35,5 @@ t = ":run-shell-command cargo test"
 [keys.insert]
 "C-[" = "normal_mode"
 
+[keys.normal]
+"A-]" = "signature_help"

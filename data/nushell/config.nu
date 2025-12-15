@@ -1,3 +1,12 @@
+let trail = [
+  'code/bin'
+  '.local/bin'  
+  '.deno/bin'
+  '.cargo/bin'
+  '.juliaup/bin'
+  '.yarn/bin'
+  '.go/bin'
+]
 let trail = ['code/bin' '.local/bin' '.cargo/bin' '.juliaup/bin' '.yarn/bin' '.go/bin']
 let path = $trail | each {|t| $env.home | path join $t}
 $env.path = ($env.path | prepend $path | uniq)

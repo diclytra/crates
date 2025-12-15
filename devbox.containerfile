@@ -61,6 +61,7 @@ EOF
 RUN <<-EOF
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 	curl -fsSL https://install.julialang.org | sh -s -- -y
+	curl -fsSL https://deno.land/install.sh | sh -s -- -y
 EOF
 
 RUN <<-EOF
