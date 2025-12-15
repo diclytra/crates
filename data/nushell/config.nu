@@ -25,6 +25,6 @@ gpg-connect-agent updatestartuptty /bye | ignore
 
 if (is-terminal -i) {
   if ($env.tmux? | is-empty) {
-    tmux -2u new -A -s main
+    tmux -2u new -A -s main; exit
   }
 }
