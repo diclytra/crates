@@ -16,13 +16,15 @@ ENV HOSTNAME=$NAME
 
 COPY data/root/nushell.repo /etc/yum.repos.d/nushell.repo
 COPY data/root/hashicorp.repo /etc/yum.repos.d/hashicorp.repo
+COPY data/root/fury.repo /etc/yum.repos.d/fury.repo
 RUN <<-EOF
 	echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf
 	dnf -y update
 	dnf -y install \
-	go python pip pipx nodejs yarn shfmt git tmux awscli2 \
-	helix gnupg pinentry-tty nushell gocryptfs terraform \
-	podman fuse-overlayfs yq zip
+	go python pip pipx nodejs yarn shfmt git tmux awscli2 helix \
+	gnupg pinentry-tty nushell gocryptfs terraform terraform-ls \
+	podman fuse-overlayfs yq zip ansible carapace-bin ruff \
+	python3-lsp-ruff python3-ruff
 	curl -sS https://starship.rs/install.sh | sh -s -- -y
 EOF
 
@@ -52,21 +54,14 @@ RUN <<-EOF
 EOF
 
 RUN <<-EOF
-	pipx install python-lsp-server ruff
-	pipx inject python-lsp-server python-lsp-ruff
-	pip install -U pip
-	pip install numpy pandas seaborn plotly 
-EOF
-
-RUN <<-EOF
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-	curl -fsSL https://install.julialang.org | sh -s -- -y
 	curl -fsSL https://deno.land/install.sh | sh -s -- -y
 EOF
 
 RUN <<-EOF
 	nu -c 'mkdir ($nu.data-dir | path join "vendor/autoload")'
 	nu -c 'starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")'
+	nu -c '$nu.user-autoload-dirs | each {|e|  mkdir $e}'
 EOF
 
 COPY data/gnupg .gnupg

@@ -2,3 +2,5 @@ Host *
    StrictHostKeyChecking no
    UserKnownHostsFile=/dev/null
    LogLevel QUIET
+   IdentityFile ~/.ssh/0x14DD101B
+   IdentitiesOnly yes

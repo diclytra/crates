@@ -1,13 +1,18 @@
 [[language]]
+name = "nu"
+indent = { tab-width = 2, unit = "\t" }
+
+
+[language-server.bash-language-server]
+command = "bash-language-server"
+args = ["start"]
+
+[[language]]
 name = "bash"
 language-servers = [ "bash-language-server" ]
 formatter = { command = "shfmt" }
 indent = { tab-width = 2, unit = "\t" }
 auto-format = true
-
-[language-server.bash-language-server]
-command = "bash-language-server"
-args = ["start"]
 
 [[language]]
 name = "go"
@@ -15,26 +20,24 @@ formatter = { command = "goimports" }
 indent = { tab-width = 2, unit = "\t" }
 auto-format = true
 
+[language-server]
+deno = { command = "deno", args = ["lsp"] }
+
+[[language]]
+name = "typescript"
+file-types = ["ts","tsx"]
+roots = ["deno.json","deno.jsonc","tsconfig.json","package.json"]
+auto-format = true
+indent = { tab-width = 2, unit = "\t" }
+language-servers = ["deno"]
+
 [[language]]
 name = "javascript"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
-indent = { tab-width = 2, unit = "\t" }
+file-types = ["js","jsx","mjs"]
+roots = ["deno.json","deno.jsonc","package.json"]
 auto-format = true
-
-[[language]]
-name = "jsx"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
 indent = { tab-width = 2, unit = "\t" }
-auto-format = true
-
-[[language]]
-name = "tsx"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "prettier", args = [ "--parser", "typescript" ] }
-indent = { tab-width = 2, unit = "\t" }
-auto-format = true
+language-servers = ["deno"]
 
 [[language]]
 name = "html"
@@ -50,20 +53,22 @@ formatter = { command = 'prettier', args = ["--parser", "css"] }
 
 [[language]]
 name = "python"
-language-servers = ["pylsp", "ruff"]
-auto-format = true
+language-servers = ["ruff"]
 scope = "source.python"
+formatter = { command = "ruff", args = ["format", "--line-length", "96", "-"] }
+auto-format = true
 
-[language.formatter]
-command = "ruff"
-args = ["format", "-"]
+[[language]]
+name = "hcl"
+file-types = ["tf"]
+formatter = { command = "terraform", args = ["fmt", "-"] }
 
-[language-server.ruff]
-command = "ruff"
-args = ["server"]
-
-[language-server.pylsp.config.pylsp.plugins]
-pylsp_mypy.enabled = true
-pylsp_mypy.live_mode = true
-rope_autoimport.enabled = true
-
+[[language]]
+name = "markdown"
+formatter = { command = 'prettier', args = [
+  "--parser",
+  "markdown",
+  "--prose-wrap",
+  "never"
+] }
+auto-format = true

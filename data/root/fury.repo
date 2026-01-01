@@ -1,0 +1,7 @@
+# /etc/yum.repos.d/fury.repo
+[fury]
+name=Gemfury Private Repo
+baseurl=https://yum.fury.io/rsteube/
+enabled=1
+gpgcheck=0
+
