@@ -1,11 +1,9 @@
 FROM registry.fedoraproject.org/fedora
 
-ARG VERS
 ARG NAME
 ARG UIDN
 
 LABEL name=$NAME
-LABEL version=$VERS
 LABEL description="Development Environmant"
 LABEL maintainer="Nero Dicentra <nero@asgard.id>"
 

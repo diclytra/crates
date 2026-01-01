@@ -8,7 +8,7 @@ let trail = [
 ] | each {|e| $env.home | path join $e bin} | append $env.path | uniq
 
 let nude = [
- 'devine/nuts'
+ 'nuts'
  ] | each {|e| $env.home | path join $e}
 
 $env.path = $trail
@@ -19,6 +19,7 @@ $env.config.buffer_editor = 'hx'
 $env.config.edit_mode = 'vi'
 $env.config.show_banner = false
 $env.config.table.mode = 'light'
+$env.GNUPGHOME = "~/box/gpg"
 
 gpgconf --kill all | ignore
 gpgconf --launch gpg-agent | ignore
