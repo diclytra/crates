@@ -38,8 +38,9 @@ def build [cfg: record] {
 }
 
 def run [cfg: record] {
-  let base = [/home $cfg.uidn]
   let name = $'($cfg.name)-(random int 10..99)'
+
+  let base = [/data]
   let vls = $cfg.volume | items {|k, v|
     [-v $'($v):($base | path join $k)']
   } | flatten

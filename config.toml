@@ -3,9 +3,4 @@ uidn = "super"
 cli = "podman"
 
 [volume]
-bin = "/Users/nero/Home/bin"
-data = "/Users/nero/Home/data"
-nuts = "/Users/nero/Home/nuts"
-repos = "/Users/nero/Home/repos"
-stuff = "/Users/nero/Home/stuff"
-box = "/Users/nero/Home/box"
+host = "/Users/nero/Home"
